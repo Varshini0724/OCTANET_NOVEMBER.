@@ -1,951 +1,407 @@
-/* 
-Since Im sharing the code, 
-you have full access to the function....
-but please dont spam with the live version
-rest is your choice ^_^
-*/
+let categories = [{
+        title: "Personal",
+        img: "boy.png",
+    },
+    {
+        title: "Work",
+        img: "briefcase.png",
+    },
+    {
+        title: "Shopping",
+        img: "shopping.png",
+    },
+    {
+        title: "Coding",
+        img: "web-design.png",
+    },
+    {
+        title: "Health",
+        img: "healthcare.png",
+    },
+    {
+        title: "Fitness",
+        img: "dumbbell.png",
+    },
+    {
+        title: "Education",
+        img: "education.png",
+    },
+    {
+        title: "Finance",
+        img: "saving.png",
+    },
+];
 
-// Firebase Management
+let tasks = [{
+        id: 1,
+        task: "Go to market",
+        category: "Shopping",
+        completed: false,
+    },
+    {
+        id: 2,
+        task: "Read a chapter of a book",
+        category: "Personal",
+        completed: false,
+    },
+    {
+        id: 3,
+        task: "Prepare presentation for meeting",
+        category: "Work",
+        completed: false,
+    },
+    {
+        id: 4,
+        task: "Complete coding challenge",
+        category: "Coding",
+        completed: false,
+    },
+    {
+        id: 5,
+        task: "Take a 30-minute walk",
+        category: "Health",
+        completed: false,
+    },
+    {
+        id: 6,
+        task: "Do a 20-minute HIIT workout",
+        category: "Fitness",
+        completed: false,
+    },
+    {
+        id: 7,
+        task: "Watch an educational video online",
+        category: "Education",
+        completed: false,
+    },
+    {
+        id: 8,
+        task: "Review monthly budget",
+        category: "Finance",
+        completed: false,
+    },
+    {
+        id: 9,
+        task: "Buy groceries for the week",
+        category: "Shopping",
+        completed: false,
+    },
+    {
+        id: 10,
+        task: "Write in a journal",
+        category: "Personal",
+        completed: false,
+    },
+    {
+        id: 11,
+        task: "Send follow-up emails",
+        category: "Work",
+        completed: false,
+    },
+    {
+        id: 12,
+        task: "Work on a coding side project",
+        category: "Coding",
+        completed: false,
+    },
+    {
+        id: 13,
+        task: "Try a new healthy recipe",
+        category: "Health",
+        completed: false,
+    },
+    {
+        id: 14,
+        task: "Attend a yoga class",
+        category: "Fitness",
+        completed: false,
+    },
+    {
+        id: 15,
+        task: "Read an article about a new topic",
+        category: "Education",
+        completed: false,
+    },
+    {
+        id: 16,
+        task: "Set up automatic bill payments",
+        category: "Finance",
+        completed: false,
+    },
+    // Additional tasks for each category
+    {
+        id: 17,
+        task: "Buy new clothes",
+        category: "Shopping",
+        completed: false,
+    },
+    {
+        id: 18,
+        task: "Meditate for 10 minutes",
+        category: "Personal",
+        completed: false,
+    },
+    {
+        id: 19,
+        task: "Prepare agenda for team meeting",
+        category: "Work",
+        completed: false,
+    },
+    {
+        id: 20,
+        task: "Debug a software issue",
+        category: "Coding",
+        completed: false,
+    },
+    {
+        id: 21,
+        task: "Try a new recipe for lunch",
+        category: "Health",
+        completed: false,
+    },
+    {
+        id: 22,
+        task: "Go for a run",
+        category: "Fitness",
+        completed: false,
+    },
+    {
+        id: 23,
+        task: "Learn a new language online",
+        category: "Education",
+        completed: false,
+    },
+    {
+        id: 24,
+        task: "Read about history",
+        category: "Education",
+        completed: false,
+    },
+    {
+        id: 25,
+        task: "Review investment portfolio",
+        category: "Finance",
+        completed: false,
+    },
+    // Add more tasks for each category as desired
+];
 
-var firebaseConfig = {
-
-    apiKey: "<-->",
-    authDomain: "<-->",
-    databaseURL: "<-->",
-    projectId: "<-->",
-    storageBucket: "<-->",
-    messagingSenderId: "<-->",
-    appId: "<-->",
-    measurementId: "<-->"
-
+// Define functions
+const saveLocal = () => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-db.settings({ timestampsInSnapshots: true });
-
-// db.collection("cafes").get().then((snapshot) => {
-
-//     snapshot.docs.forEach((doc) => {
-//         console.log(doc.data());
-//     });
-
-
-// });
-
-// Web Script
-
-// Declaring variables
-
-var documentData;
-var currentCode;
-
-// Etc
-
-// $(".section-2-container").addClass("s2c-start");
-
-$("#loadingCode").hide();
-$(".notes-pre").show();
-$(".notes-container").hide();
-
-$("#codeInput1").keydown(function(e) {
-    var k = e.keyCode || e.which;
-    var ok = k >= 65 && k <= 90 || k >= 96 && k <= 105 || k >= 35 && k <= 40 || k == 9 || k == 46 || k == 8 || (!e.shiftKey && k >= 48 && k <= 57);
-    if (!ok || (e.ctrlKey && e.altKey)) {
-        e.preventDefault();
+const getLocal = () => {
+    const tasksLocal = JSON.parse(localStorage.getItem("tasks"));
+    if (tasksLocal) {
+        tasks = tasksLocal;
     }
-});
+};
 
-$("#cutCodeBtn").on("click", function() {
-    $("#codeInput1").val("");
-    $(".s-1-circle-A").removeClass("proc-c-2");
-});
+const toggleScreen = () => {
+    screenWrapper.classList.toggle("show-category");
+};
 
-// Dynamic Styles
+const updateTotals = () => {
+    const categoryTasks = tasks.filter(
+        (task) =>
+        task.category.toLowerCase() === selectedCategory.title.toLowerCase()
+    );
+    numTasks.innerHTML = `${categoryTasks.length} Tasks`;
+    totalTasks.innerHTML = tasks.length;
+};
 
-$("#superbody").css({ "min-height": $(document).height() + "px" });
-$(".notes-edit notes-edit-open").css({ "min-height": $(document).height() - 50 + "px" });
-setTimeout(function() {
-    $("#superbody").css({ "min-height": $(document).height() + "px" });
-    $(".notes-edit notes-edit-open").css({ "min-height": $(document).height() - 50 + "px" });
-}, 2000);
-$("#closeBBNBB").fadeOut(200);
-
-$("#codeInput1").on("input", function(e) {
-
-    let thisElVal = e.target.value;
-    if (thisElVal.length == 4) {
-        $(".s-1-circle-A").addClass("proc-c-2");
-    } else {
-        $(".s-1-circle-A").removeClass("proc-c-2");
-    }
-
-});
-
-// Manage tasks
-
-var completeNewList = 2;
-
-function addTask(taskInfo) {
-
-    let div = document.createElement('div');
-    div.setAttribute('id', 'tk' + taskInfo.id);
-    let innerHtml1 =
-        `
-<div class="task">
-    <div class="task-icon">
-        <ion-icon name="calendar-outline"></ion-icon>
-    </div>
-    <div class="task--box-2">
-        <div class="task-heading-1">
-`;
-    let innerHtml2 = taskInfo.heading;
-    let innerHtml3 =
-        `
-</div>
-    <div class="task-sub-1">
-`;
-    let innerHtml4 = taskInfo.taskText;
-    let innerHtml5 =
-        `
-</div>
-    </div>
-    <div class="task--box-3">
-        <div class="task-delete-1">
-            <ion-icon name="close"></ion-icon>
-        </div>
-    </div>
-</div>
-`;
-
-    let innerHtml = innerHtml1 + innerHtml2 + innerHtml3 + innerHtml4 + innerHtml5;
-    div.innerHTML = innerHtml;
-    document.querySelector(".tasks-container").appendChild(div);
-
-    $("#" + $(div).attr("id") + " .task--box-3").on("click", function() {
-
-        let curClickedID = parseInt($(div).attr("id").replace("tk", ""));
-
-        $("#" + $(div).attr("id")).css({
-            opacity: 0,
-            transform: "translateY(10px)"
+const renderCategories = () => {
+    categoriesContainer.innerHTML = "";
+    categories.forEach((category) => {
+        const categoryTasks = tasks.filter(
+            (task) => task.category.toLowerCase() === category.title.toLowerCase()
+        );
+        const div = document.createElement("div");
+        div.classList.add("category");
+        div.addEventListener("click", () => {
+            screenWrapper.classList.toggle("show-category");
+            selectedCategory = category;
+            updateTotals();
+            categoryTitle.innerHTML = category.title;
+            categoryImg.src = `images/${category.img}`;
+            renderTasks();
         });
 
-        setTimeout(function() {
-            $("#" + $(div).attr("id")).animate({
-                height: 0
-            }, 20);
-        }, 400);
+        div.innerHTML = `
+                    <div class="left">
+                  <img src="images/${category.img}"
+                   alt="${category.title}"
+                    />
+                  <div class="content">
+                    <h1>${category.title}</h1>
+                    <p>${categoryTasks.length} Tasks</p>
+                  </div>
+                </div>
+                <div class="options">
+                  <div class="toggle-btn">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+      `;
 
-        let docRef = db.collection("lists").doc(currentCode);
-
-        docRef.get().then(function(doc) {
-
-            if (doc.exists) {
-
-                let newListAfterDel = doc.data().tasks;
-
-                if (curClickedID == 0) {
-                    newListAfterDel.shift();
-                    completeNewList = newListAfterDel;
-                } else {
-                    newListAfterDel.splice(curClickedID, curClickedID);
-                    completeNewList = newListAfterDel;
-                }
-
-                db.collection("lists").doc(currentCode).update({
-                        tasks: newListAfterDel
-                    })
-                    .then(function() {
-
-                        showToast("The task was successfully deleted");
-
-                    })
-                    .catch(function(error) {
-                        // console.error("Error writing document: ", error);
-                        showToast("There was an error while writing data");
-                    });
-
-            } else {
-
-                showToast("There was an unusual error. Error Code: T560");
-
-            }
-
-        }).catch(function(error) {
-            // console.log("There was this error while retrieving data:", error);
-            showToast("There was an error while retrieving data");
-        });
-
+        categoriesContainer.appendChild(div);
     });
+};
 
-}
-
-function removeTask(taskId) {
-
-    $("#" + taskId).css({
-        opacity: 0,
-        transform: "scale(0)"
-    });
-    setTimeout(function() {
-        let elem = document.getElementById(taskId);
-        elem.parentNode.removeChild(elem);
-    }, 200);
-
-}
-
-function clearTask() {
-    $(".tasks-container").html("");
-}
-
-function showTaskScreen() {
-
-    $(".s-1-heading-1").addClass("s-1-heading-1-after-an");
-    $(".section-1").addClass("section-1-after-animate");
-
-    // $("#cutCodeBtn").hide();
-    // $("#loadingCode").show();
-
-    $("#codeInput1").attr("disabled", "true");
-
-    setTimeout(function() {
-        $(".section-2-container").addClass("s2c-start");
-        $("#codeInput1").val("");
-    }, 400);
-
-    $("#codeDisplayHereTXT").text(currentCode);
-
-    // Show values
-
-    if (documentData == false) {
-
-        $(".notes-pre").show();
-        $(".notes-container").hide();
-
-        let today = new Date();
-        let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        $(".s-2-date-1").text(today.getDate() + " " + months[today.getMonth()] + " " + today.getFullYear());
-
+const renderTasks = () => {
+    tasksContainer.innerHTML = "";
+    const categoryTasks = tasks.filter(
+        (task) =>
+        task.category.toLowerCase() === selectedCategory.title.toLowerCase()
+    );
+    if (categoryTasks.length === 0) {
+        tasksContainer.innerHTML = `<p class="no-tasks">No tasks added for this category</p>`;
     } else {
-
-        let today = new Date();
-        let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        $(".s-2-date-1").text(today.getDate() + " " + months[today.getMonth()] + " " + today.getFullYear());
-
-        // if(typeof(documentData.name) == "string"){
-        //     $(".section-2-heading-1").text("Welcome, " + documentData.name);
-        // }
-
-        if (typeof(documentData.note) == "string") {
-            $(".notes-pre").hide();
-            $(".notes-container").show();
-            $(".note-heading-1").text(documentData.noteHeading);
-            $(".note-subhead-1").text(documentData.note);
-        } else {
-            $(".notes-pre").show();
-            $(".notes-container").hide();
-        }
-
-        if (typeof(documentData.name) == "string") {
-            $("#nameInputTxt").val(documentData.name);
-            if (documentData.name.length > 10) {
-                let maxLength = 10;
-                let resultName = $("#nameInputTxt").val().substring(0, maxLength) + '...';
-                $("#nameInputTxt").val(resultName);
-            } else {
-                $("#nameInputTxt").val(documentData.name);
-            }
-        } else {
-            $("#nameInputTxt").val("Guest");
-        }
-
-        if (documentData.tasks == undefined) {
-
-        } else {
-
-            clearTask();
-            let docData = documentData.tasks;
-
-            setTimeout(function() {
-                for (task in docData) {
-
-                    addTask({
-                        id: task,
-                        heading: docData[task].split("~")[0],
-                        taskText: docData[task].split("~")[1]
-                    });
-
-                }
-            }, 860);
-
-        }
-
-    }
-
-}
-
-$("#codeInput1").on("keyup", function(e) {
-    e.which = e.which || e.keyCode;
-    if (e.which == 13) {
-        $("#continueWithCodeBtn").click();
-    }
-});
-
-$("#continueWithCodeBtn").on("click", function() {
-
-    let inputValue = $("#codeInput1").val().toUpperCase();
-
-    if (inputValue.length == 4) {
-
-        currentCode = inputValue;
-
-        let docRef = db.collection("lists").doc(inputValue);
-
-        $("#cutCodeBtn").hide();
-        $("#loadingCode").show();
-
-        docRef.get().then(function(doc) {
-
-            if (doc.exists) {
-                documentData = doc.data();
-                // console.log("Document data (it exists):", doc.data());
-                // var name = doc.get('name');
-                // console.log(name);
-                setTimeout(function() {
-                    showTaskScreen();
-                })
-
-            } else {
-
-                db.collection("lists").doc(currentCode).set({
-                        code: currentCode
-                    })
-                    .then(function() {
-                        documentData = { code: currentCode };
-                        // console.log("Document does not exists!");
-                        setTimeout(function() {
-                            showTaskScreen();
-                        })
-                    })
-                    .catch(function(error) {
-                        showToast("There was an error while writing data");
-                    });
-            }
-
-        }).catch(function(error) {
-            // console.log("There was this error while retrieving data:", error);
-            showToast("There was an error while retrieving data:");
-        });
-
-    } else {
-
-        showToast("The pin is supposed to be of 4 characters");
-
-    }
-
-});
-
-$(".section-2").scroll(function() {
-
-    if ($(this).scrollTop() == 0) {
-        $(".navbar").css("box-shadow", "0 0px 0px transparent");
-    } else {
-        $(".navbar").css("box-shadow", "0 4px 6px rgb(213 221 255 / 26%)");
-    }
-
-});
-
-$(".nav-1").on("click", function() {
-
-    $(".superbody").css({
-        transform: "translateX(90%)",
-        filter: "brightness(0.5)"
-    });
-    $(".side-menu").css({
-        transform: "translateX(0px)"
-    });
-
-});
-
-$(".side-m-c-c-3").on("click", function() {
-
-    $(".superbody").css({
-        transform: "translateX(0px)",
-        filter: "brightness(1)"
-    });
-    $(".side-menu").css({
-        transform: "translateX(-768px)"
-    });
-
-});
-
-$('#codeInput1').on('input', function() {
-    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
-});
-
-$('#noteHeadingTxt').on('input', function() {
-    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
-});
-
-$('#fullNoteTxt').on('input', function() {
-    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
-});
-
-$('#nameInputTxt').on('input', function() {
-    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
-});
-
-$('#taskHeading2').on('input', function() {
-    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
-});
-
-$('#taskFullTxt2').on('input', function() {
-    if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);
-});
-
-$(".th2-B").on("click", function() {
-
-    let noteRef = db.collection('lists').doc(currentCode);
-
-    let removeNote = noteRef.update({
-        tasks: firebase.firestore.FieldValue.delete()
-    });
-
-    let tasksNo = $(".tasks-container").children().length;
-    for (let i = 0; i <= tasksNo; i++) {
-
-        $("#tk" + i).animate({
-            opacity: 0,
-            transform: "translateY(10px)"
-        }, 400);
-
-    }
-
-    setTimeout(function() {
-        $(".tasks-container").html("");
-        showToast("All tasks were cleared successfully");
-    }, 400);
-
-});
-
-$(".notes-pre").on("click", function() {
-
-    if (!($(".nav-1").css("display") == "none")) {
-        if ($(".nav-1").css("opacity") == 1) {
-
-            $(".nav-1").fadeOut(100);
-            $(".nav-2").fadeOut(100);
-            setTimeout(function() {
-                $("#closeBBNBB").fadeIn(0);
-            }, 100);
-            setTimeout(function() {
-                $("#closeBBNBB").css({
-                    transform: "translateX(0px)",
-                    opacity: 1
-                });
-            }, 200);
-            $(".notes-edit").addClass("notes-edit-open");
-
-        }
-    }
-
-});
-
-$("#closeBBNBB").on("click", function() {
-
-    $("#closeBBNBB").css({
-        transform: "translateX(10px)",
-        opacity: 0
-    });
-    setTimeout(function() {
-        $("#closeBBNBB").fadeOut(100);
-    }, 400);
-    setTimeout(function() {
-        $(".nav-1").fadeIn(400);
-        $(".nav-2").fadeIn(400);
-    }, 600);
-
-    $(".notes-edit").removeClass("notes-edit-open");
-    $(".add-task").removeClass("add-task-open");
-
-});
-
-$(".nic1-1").on("click", function() {
-
-    if (!($(".nav-1").css("display") == "none")) {
-        if ($(".nav-1").css("opacity") == 1) {
-
-            $(".nav-1").fadeOut(100);
-            $(".nav-2").fadeOut(100);
-            setTimeout(function() {
-                $("#closeBBNBB").fadeIn(0);
-            }, 100);
-            setTimeout(function() {
-                $("#closeBBNBB").css({
-                    transform: "translateX(0px)",
-                    opacity: 1
-                });
-            }, 200);
-            $(".notes-edit").addClass("notes-edit-open");
-
-        }
-    }
-
-});
-
-$(".nic1-2").on("click", function() {
-
-    let noteRef = db.collection('lists').doc(currentCode);
-
-    let removeNote = noteRef.update({
-        note: firebase.firestore.FieldValue.delete(),
-        noteHeading: firebase.firestore.FieldValue.delete()
-    });
-
-    $(".notes-container").fadeOut(400);
-    $(".notes-pre").css({
-        opacity: 0,
-        transform: "translateY(10px)"
-    });
-    setTimeout(function() {
-        $(".notes-pre").fadeIn(0);
-        $(".notes-pre").css({
-            opacity: 1,
-            transform: "translateY(0px)"
-        });
-    }, 420);
-
-});
-
-$(".nehc1--input-A").on("focus focusin", function() {
-    $(this).css({
-        color: "#4a70f9",
-        background: "#ffffff",
-        border: "2px solid #ffffff"
-    });
-});
-
-$(".nehc1--input-A").on("blur focusout", function() {
-    $(this).css({
-        color: "white",
-        background: "#5882fa",
-        border: "2px solid #5882fa"
-    });
-});
-
-$(".nehc1--input-A--B").on("focus focusin", function() {
-    $(this).css({
-        color: "#4a70f9"
-    });
-    $(".nehc1-B--BB").css({
-        background: "white",
-        border: "2px solid #ffffff"
-    });
-});
-
-$(".nehc1--input-A--B").on("blur focusout", function() {
-    $(this).css({
-        color: "white"
-    });
-    $(".nehc1-B--BB").css({
-        background: "#5882fa",
-        border: "2px solid #5882fa"
-    });
-});
-
-// New Declarations
-
-var prevNameTxt = $("#nameInputTxt").val();
-
-var noteHeadingTxt;
-var fullNoteTxt;
-
-var taskHeadingTxt;
-var taskCompleteTxt;
-
-$("#submitNoteBtn2").on("click", function() {
-
-    if (!($("#noteHeadingTxt").val().length == "")) {
-        if (!($("#fullNoteTxt").val().length == "")) {
-            if ($("#noteHeadingTxt").val().length < 100) {
-                if ($("#fullNoteTxt").val().length < 220) {
-
-                    noteHeadingTxt = $("#noteHeadingTxt").val();
-                    fullNoteTxt = $("#fullNoteTxt").val();
-
-                    $("#noteHeadingTxt").attr("disabled", "true");
-                    $("#fullNoteTxt").attr("disabled", "true");
-
-                    db.collection("lists").doc(currentCode).update({
-                            noteHeading: $("#noteHeadingTxt").val(),
-                            note: $("#fullNoteTxt").val()
-                        })
-                        .then(function() {
-
-                            $("#noteHeadingTxt").val("");
-                            $("#fullNoteTxt").val("");
-                            $("#noteHeadingTxt").removeAttr("disabled");
-                            $("#fullNoteTxt").removeAttr("disabled");
-
-                            if (!($("#closeBBNBB").css("opacity") == 0)) {
-
-                                $("#closeBBNBB").css({
-                                    transform: "translateX(10px)",
-                                    opacity: 0
-                                });
-                                setTimeout(function() {
-                                    $("#closeBBNBB").fadeOut(100);
-                                }, 400);
-                                setTimeout(function() {
-                                    $(".nav-1").fadeIn(400);
-                                    $(".nav-2").fadeIn(400);
-                                }, 600);
-
-                                setTimeout(function() {
-                                    $(".notes-pre").css({
-                                        transform: "translateY(20px)",
-                                        opacity: 0
-                                    });
-                                    $(".notes-container").css({
-                                        transform: "translateY(20px)",
-                                        opacity: 0
-                                    });
-                                }, 600);
-                                setTimeout(function() {
-                                    $(".notes-pre").fadeOut(0);
-                                    $(".notes-container").fadeIn(0);
-                                }, 800);
-                                setTimeout(function() {
-                                    $(".notes-container").css({
-                                        transform: "translateY(0px)",
-                                        opacity: 1
-                                    });
-                                }, 820)
-
-                                $(".notes-edit").removeClass("notes-edit-open");
-
-                            }
-
-                            $(".note-heading-1").text(noteHeadingTxt);
-                            $(".note-subhead-1").text(fullNoteTxt);
-
-                        })
-                        .catch(function(error) {
-                            // console.error("Error writing document: ", error);
-                            showToast("There was an error while writing data");
-                        });
-
-                }
-            }
-        }
-    }
-
-});
-
-function showToast(msg) {
-    $(".bottom-toast").text(msg);
-    $(".bottom-toast").addClass("bottom-toast-open");
-    setTimeout(function() {
-        $(".bottom-toast").removeClass("bottom-toast-open");
-    }, 2400);
-}
-
-$("#nameInputTxt").on("focus focusin", function() {
-    prevNameTxt = $("#nameInputTxt").val();
-});
-
-$("#nameInputTxt").on("blur focusout", function() {
-
-    if (($("#nameInputTxt").val() == "")) {
-        $("#nameInputTxt").val(prevNameTxt);
-    } else {
-        if ($("#nameInputTxt").val().length > 10) {
-            let maxLength = 10;
-            let resultName = $("#nameInputTxt").val().substring(0, maxLength) + '...';
-            $("#nameInputTxt").val(resultName);
-        } else {
-            $("#nameInputTxt").val($("#nameInputTxt").val());
-        }
-
-        db.collection("lists").doc(currentCode).update({
-                name: $("#nameInputTxt").val()
-            })
-            .then(function() {
-
-                showToast("Your name was saved successfully!");
-
-            })
-            .catch(function(error) {
-                // console.error("Error writing document: ", error);
-                showToast("There was an error while writing data");
+        categoryTasks.forEach((task) => {
+            const div = document.createElement("div");
+            div.classList.add("task-wrapper");
+            const label = document.createElement("label");
+            label.classList.add("task");
+            label.setAttribute("for", task.id);
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = task.id;
+            checkbox.checked = task.completed;
+            checkbox.addEventListener("change", () => {
+                const index = tasks.findIndex((t) => t.id === task.id);
+                tasks[index].completed = !tasks[index].completed;
+                saveLocal();
             });
-    }
+            div.innerHTML = `
+        <div class="delete">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    />
+                  </svg>
+                </div>
+                `;
+            label.innerHTML = `
+                <span class="checkmark"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
+                  </svg>
+                </span>
+                <p>${task.task}</p>
+          `;
+            label.prepend(checkbox);
+            div.prepend(label);
+            tasksContainer.appendChild(div);
 
-});
-
-$("#sm1").on("click", function() {
-
-    $(".superbody").css({
-        transform: "translateX(0px)",
-        filter: "brightness(1)"
-    });
-    $(".side-menu").css({
-        transform: "translateX(-768px)"
-    });
-
-    setTimeout(function() {
-        $(".nav-1").fadeOut(100);
-        $(".nav-2").fadeOut(100);
-        setTimeout(function() {
-            $("#closeBBNBB").fadeIn(0);
-        }, 100);
-        setTimeout(function() {
-            $("#closeBBNBB").css({
-                transform: "translateX(0px)",
-                opacity: 1
+            const deleteBtn = div.querySelector(".delete");
+            deleteBtn.addEventListener("click", () => {
+                const index = tasks.findIndex((t) => t.id === task.id);
+                tasks.splice(index, 1);
+                saveLocal();
+                renderTasks();
             });
-        }, 200);
-        $(".notes-edit").addClass("notes-edit-open");
-    }, 320);
+        });
 
-});
+        renderCategories();
+        updateTotals();
+    }
+};
 
-$("#sm2").on("click", function() {
+const toggleAddTaskForm = () => {
+    addTaskWrapper.classList.toggle("active");
+    blackBackdrop.classList.toggle("active");
+    addTaskBtn.classList.toggle("active");
+};
 
-    // $(".superbody").css({
-    //     transform: "translateX(0px)",
-    //     filter: "brightness(1)"
-    // });
-    // $(".side-menu").css({
-    //     transform: "translateX(-768px)"
-    // });
+const addTask = (e) => {
+    e.preventDefault();
+    const task = taskInput.value;
+    const category = categorySelect.value;
 
-    if ($("#darkStyle").attr("media") == "max-width=1px") {
-        $("#darkStyle").attr("media", "");
+    if (task === "") {
+        alert("Please enter a task");
     } else {
-        $("#darkStyle").attr("media", "max-width=1px");
+        const newTask = {
+            id: tasks.length + 1,
+            task,
+            category,
+            completed: false,
+        };
+        taskInput.value = "";
+        tasks.push(newTask);
+        saveLocal();
+        toggleAddTaskForm();
+        renderTasks();
     }
+};
 
-    // setTimeout(function () {
-    //     $(".superbody").css({
-    //         filter: "invert(1)"
-    //     });
-    // }, 420)
+// Initialize variables and DOM elements
+let selectedCategory = categories[0];
+const categoriesContainer = document.querySelector(".categories");
+const screenWrapper = document.querySelector(".wrapper");
+const menuBtn = document.querySelector(".menu-btn");
+const backBtn = document.querySelector(".back-btn");
+const tasksContainer = document.querySelector(".tasks");
+const numTasks = document.getElementById("num-tasks");
+const categoryTitle = document.getElementById("category-title");
+const categoryImg = document.getElementById("category-img");
+const categorySelect = document.getElementById("category-select");
+const addTaskWrapper = document.querySelector(".add-task");
+const addTaskBtn = document.querySelector(".add-task-btn");
+const taskInput = document.getElementById("task-input");
+const blackBackdrop = document.querySelector(".black-backdrop");
+const addBtn = document.querySelector(".add-btn");
+const cancelBtn = document.querySelector(".cancel-btn");
+const totalTasks = document.getElementById("total-tasks");
 
-});
+// Attach event listeners
+menuBtn.addEventListener("click", toggleScreen);
+backBtn.addEventListener("click", toggleScreen);
+addTaskBtn.addEventListener("click", toggleAddTaskForm);
+blackBackdrop.addEventListener("click", toggleAddTaskForm);
+addBtn.addEventListener("click", addTask);
+cancelBtn.addEventListener("click", toggleAddTaskForm);
 
-$("#sm6").on("click", function() {
-
-    currentCode = "";
-    $(".superbody").css({
-        transform: "translateX(0px)",
-        filter: "brightness(1)"
-    });
-    $(".side-menu").css({
-        transform: "translateX(-768px)"
-    });
-
-    setTimeout(function() {
-
-        $(".section-2-container").removeClass("s2c-start");
-        $("#codeInput1").val("");
-
-        $("#loadingCode").hide();
-        $("#cutCodeBtn").show();
-
-        $("#codeInput1").removeAttr("disabled");
-
-        setTimeout(function() {
-            $(".s-1-heading-1").removeClass("s-1-heading-1-after-an");
-            $(".section-1").removeClass("section-1-after-animate");
-        }, 400);
-
-    }, 400);
-
-});
-
-$(".th2-C").on("click", function() {
-
-    if (!($(".nav-1").css("display") == "none")) {
-        if ($(".nav-1").css("opacity") == 1) {
-
-            if (!(completeNewList == 2)) {
-                setTimeout(function() {
-
-                    clearTask();
-                    let docData = completeNewList;
-                    for (task in docData) {
-                        addTask({
-                            id: task,
-                            heading: docData[task].split("~")[0],
-                            taskText: docData[task].split("~")[1]
-                        });
-                    }
-                    completeNewList = 2;
-
-                }, 320)
-            }
-
-            $(".nav-1").fadeOut(100);
-            $(".nav-2").fadeOut(100);
-            setTimeout(function() {
-                $("#closeBBNBB").fadeIn(0);
-            }, 100);
-            setTimeout(function() {
-                $("#closeBBNBB").css({
-                    transform: "translateX(0px)",
-                    opacity: 1
-                });
-            }, 200);
-            $(".add-task").addClass("add-task-open");
-
-        }
-    }
-
-});
-
-$(".nehc1--input-A__B").on("focus focusin", function() {
-    $(this).css({
-        color: "#4a70f9",
-        background: "#ffffff",
-        border: "2px solid #ffffff"
-    });
-});
-
-$(".nehc1--input-A__B").on("blur focusout", function() {
-    $(this).css({
-        color: "white",
-        background: "#5882fa",
-        border: "2px solid #5882fa"
-    });
-});
-
-$(".nehc1--input-A--B__B").on("focus focusin", function() {
-    $(this).css({
-        color: "#4a70f9"
-    });
-    $(".nehc1-B--BB__B").css({
-        background: "white",
-        border: "2px solid #ffffff"
-    });
-});
-
-$(".nehc1--input-A--B__B").on("blur focusout", function() {
-    $(this).css({
-        color: "white"
-    });
-    $(".nehc1-B--BB__B").css({
-        background: "#5882fa",
-        border: "2px solid #5882fa"
-    });
-});
-
-var newTasksArray;
-var newTaskInfo;
-
-$("#addTaskBtn2").on("click", function() {
-
-    if (!($("#taskHeading2").val().length == "")) {
-        if (!($("#taskFullTxt2").val().length == "")) {
-            if ($("#taskHeading2").val().length < 100) {
-                if ($("#taskFullTxt2").val().length < 220) {
-
-                    taskHeadingTxt = $("#taskHeading2").val();
-                    taskCompleteTxt = $("#taskFullTxt2").val();
-
-                    $("#taskHeading2").attr("disabled", "true");
-                    $("#taskFullTxt2").attr("disabled", "true");
-
-                    $("#taskHeading2").val("");
-                    $("#taskFullTxt2").val("");
-
-                    let docRef = db.collection("lists").doc(currentCode);
-
-                    docRef.get().then(function(doc) {
-
-                        if (doc.exists) {
-
-                            let tasks;
-                            tasks = doc.data().tasks;
-
-                            if (typeof(tasks) == "undefined") {
-                                newTasksArray = [];
-                            } else {
-                                newTasksArray = tasks;
-                            }
-                            // let newTasksArray = tasks.tasks ? tasks.tasks : [];
-                            let valueToPush;
-
-                            valueToPush = taskHeadingTxt.replace("~", "").trim() + "~" + taskCompleteTxt.replace("~", "").trim();
-
-                            newTasksArray.push(valueToPush);
-
-                            newTaskInfo = {
-                                id: newTasksArray.length,
-                                heading: newTasksArray[newTasksArray.length - 1].split("~")[0],
-                                taskText: newTasksArray[newTasksArray.length - 1].split("~")[1]
-                            }
-
-                            documentData.tasks = newTasksArray;
-
-                            db.collection("lists").doc(currentCode).update({
-                                    tasks: newTasksArray
-                                })
-                                .then(function() {
-
-                                    $("#closeBBNBB").css({
-                                        transform: "translateX(10px)",
-                                        opacity: 0
-                                    });
-                                    setTimeout(function() {
-                                        $("#closeBBNBB").fadeOut(100);
-                                    }, 400);
-                                    setTimeout(function() {
-                                        $(".nav-1").fadeIn(400);
-                                        $(".nav-2").fadeIn(400);
-                                        addTask(newTaskInfo);
-                                    }, 600);
-
-                                    $("#taskHeading2").removeAttr("disabled");
-                                    $("#taskFullTxt2").removeAttr("disabled");
-
-                                    $(".notes-edit").removeClass("notes-edit-open");
-                                    $(".add-task").removeClass("add-task-open");
-
-                                })
-                                .catch(function(error) {
-                                    // console.error("Error writing document: ", error);
-                                    showToast("There was an error while writing data");
-                                });
-
-                        } else {
-                            let tasks;
-                            tasks = false;
-                        }
-
-                        // addTask({
-                        //     id: task,
-                        //     heading: docData[task].split("~")[0],
-                        //     taskText: docData[task].split("~")[1]
-                        // });
-
-                    }).catch(function(error) {
-                        // console.log("There was this error while retrieving data:", error);
-                        showToast("There was an error while retrieving data");
-                        $("#taskHeading2").removeAttr("disabled");
-                        $("#taskFullTxt2").removeAttr("disabled");
-                    });
-
-                }
-            }
-        }
-    }
-
-});
-
-$(".nav-2").on("click", function() {
-    $(".th2-C").click();
+// Render initial state
+getLocal();
+renderTasks();
+categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.title.toLowerCase();
+    option.textContent = category.title;
+    categorySelect.appendChild(option);
 });
